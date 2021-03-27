@@ -1,0 +1,16 @@
+---
+- name: Set Python executable
+  ansible.builtin.set_fact:
+    ansible_python_interpreter: "{{ pyenv_python_executable }}"
+  when: pyenv_pip_packages is defined
+
+- name: Ensure pip_install_packages are installed.
+  ansible.builtin.pip:
+    name: "{{ item.1.name }}"
+    version: "{{ item.1.version | default(omit) }}"
+    state: "{{ item.1.state | default(omit) }}"
+    executable: "{{ item.0.pip_executable }}"
+  with_subelements:
+    - "{{ pyenv_pip_packages }}"
+    - pip_packages
+  when: pyenv_pip_packages is defined

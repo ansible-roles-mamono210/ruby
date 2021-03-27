@@ -1,0 +1,14 @@
+---
+galaxy_info:
+  role_name: ruby
+  author: mamono210
+  description: Ruby installation for CentOS8
+  company: no name
+  license: "license (BSD, MIT)"
+  min_ansible_version: 3.0
+  platforms:
+    - name: EL
+      versions:
+        - 8
+  galaxy_tags: []
+dependencies: []

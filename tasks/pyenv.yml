@@ -1,0 +1,76 @@
+---
+- name: Check whether pyenv is installed
+  stat:
+    path: "{{ pyenv_user_home }}/.pyenv/bin/pyenv"
+  register: PYENV_INSTALLED
+  changed_when: false
+  ignore_errors: true
+
+- name: Install required packages (CentOS7)
+  ansible.builtin.package:
+    name: '{{ item }}'
+    state: present
+  loop:
+    - bzip2
+    - bzip2-devel
+    - gcc
+    - git
+    - libffi-devel
+    - openssl
+    - openssl-devel
+    - readline
+    - readline-devel
+    - sqlite
+    - sqlite-devel
+    - zlib-devel
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == "7"
+
+- name: Install required packages (CentOS8)
+  ansible.builtin.package:
+    name: '{{ item }}'
+    state: present
+  loop:
+    - bzip2
+    - bzip2-devel
+    - gcc
+    - git
+    - libffi-devel
+    - make
+    - openssl
+    - openssl-devel
+    - readline
+    - readline-devel
+    - sqlite
+    - sqlite-devel
+    - zlib-devel
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == "8"
+
+- name: Retrieve pyenv executable
+  ansible.builtin.git:
+    repo: 'https://github.com/pyenv/pyenv.git'
+    dest: "{{ pyenv_user_home }}/.pyenv"
+  when: not PYENV_INSTALLED.stat.exists
+
+- name: Change the ownership of pyenv executable
+  ansible.builtin.file:
+    path: "{{ pyenv_user_home }}/.pyenv"
+    owner: "{{ pyenv_owner }}"
+    group: "{{ pyenv_group }}"
+    mode: "{{ pyenv_mode }}"
+    recurse: yes
+  when: not PYENV_INSTALLED.stat.exists
+
+- name: Configure .bashrc
+  ansible.builtin.lineinfile:
+    path: "{{ pyenv_user_home }}/.bashrc"
+    line: "{{ item }}"
+    state: present
+    insertafter: EOF
+  loop:
+    - 'export PATH="{{ pyenv_user_home }}/.pyenv/bin:$PATH"'
+    - 'eval "$(pyenv init -)"'
+  when: not PYENV_INSTALLED.stat.exists

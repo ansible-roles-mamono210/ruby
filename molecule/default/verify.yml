@@ -1,0 +1,24 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Check whether ruby is installed
+      ansible.builtin.shell: |
+        ruby --version
+      register: RUBY_INSTALLED
+      changed_when: false
+
+    - name: Make sure Ruby is installed
+      ansible.builtin.debug:
+        var: RUBY_INSTALLED
+
+    - name: Check OS version
+      ansible.builtin.command: cat /etc/redhat-release
+      register: OS_VERSION
+      changed_when: false
+
+    - name: Show OS version
+      ansible.builtin.debug:
+        var: OS_VERSION

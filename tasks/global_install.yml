@@ -1,0 +1,26 @@
+---
+- name: Install Python(s)
+  become: yes
+  become_user: "{{ linux_user }}"
+  ansible.builtin.command: |
+    bash -c "{{ pyenv_user_home }}/.pyenv/bin/pyenv install \"{{ item }}\""
+  with_items: "{{ pyenv_python_installs }}"
+  changed_when: PYENV_PYTHONS_INSTALLED.stderr_lines is search("Installed Python-.*.pyenv/versions/.*")
+  failed_when: false
+  register: PYENV_PYTHONS_INSTALLED
+
+- name: Check whether Python(s) installed
+  become: yes
+  become_user: "{{ linux_user }}"
+  ansible.builtin.command: |
+    bash -c "{{ pyenv_user_home }}/.pyenv/bin/pyenv global \"{{ item }}\""
+  with_items: "{{ pyenv_python_installs }}"
+  changed_when: false
+  failed_when: PYENV_PYTHON_GLOBAL is failed
+  register: PYENV_PYTHON_GLOBAL
+
+- name: Delete pyenv version file
+  ansible.builtin.file:
+    path: "{{ pyenv_user_home }}/.pyenv/version"
+    state: absent
+  changed_when: false
