@@ -6,8 +6,6 @@ driver:
 platforms:
   - name: instance
     image: ${MOLECULE_IMAGE}
-    command: /sbin/init
-    privileged: True
 provisioner:
   name: ansible
   config_options:
