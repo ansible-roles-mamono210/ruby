@@ -2,4 +2,4 @@
 workspace: /tmp
 ruby_download_url: http://cache.ruby-lang.org/pub/ruby/3.0/ruby-3.0.0.tar.gz
 ruby_version: 3.0.0
-ruby_source_configure_command: ./configure --enable-shared
+ruby_make_prefix: /usr/local/bin/ruby

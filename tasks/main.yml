@@ -1,4 +1,12 @@
 ---
+- name: Check whether ruby is installed
+  ansible.builtin.command: ruby -v
+  register: ruby_installed
+  changed_when: false
+  ignore_errors: true
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+
 - name: Install packages required to build ruby.
   ansible.builtin.package:
     name: "{{ item }}"
@@ -15,11 +23,13 @@
     - readline-devel
     - wget
     - zlib-devel
+  when: ruby_installed is failed
 
 - name: Download ruby.
   ansible.builtin.get_url:
     url: "{{ ruby_download_url }}"
     dest: "{{ workspace }}/ruby-{{ ruby_version }}.tar.gz"
+  when: ruby_installed is failed
 
 - name: Extract ruby.
   ansible.builtin.unarchive:
@@ -27,16 +37,28 @@
     dest: "{{ workspace }}/"
     copy: false
     mode: 0755
+  when: ruby_installed is failed
 
-- name: Build ruby.
-  ansible.builtin.command: >
-    {{ item }}
-    chdir={{ workspace }}/ruby-{{ ruby_version }}
-    creates=/usr/local/bin/ruby
-  with_items:
-    - "{{ ruby_source_configure_command }}"
-    - make
-    - make install
+- name: Create Makefile.
+  ansible.builtin.command: ./configure --enable-shared
+  args:
+    chdir: "{{ workspace }}/ruby-{{ ruby_version }}"
+  when: ruby_installed is failed
+
+- name: Build ruby 1/2.
+  community.general.make:
+    chdir: "{{ workspace }}/ruby-{{ ruby_version }}"
+    params:
+      PREFIX: "{{ ruby_make_prefix }}"
+  when: ruby_installed is failed
+
+- name: Build ruby 2/2.
+  community.general.make:
+    chdir: "{{ workspace }}/ruby-{{ ruby_version }}"
+    target: install
+    params:
+      PREFIX: "{{ ruby_make_prefix }}"
+  when: ruby_installed is failed
 
 - name: Add ruby symlinks.
   ansible.builtin.file:  # noqa 208
@@ -51,3 +73,4 @@
     - rake
     - rdoc
     - ruby
+  when: ruby_installed is failed
