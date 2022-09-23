@@ -7,18 +7,18 @@
     - name: Check whether ruby is installed
       ansible.builtin.shell: |
         ruby --version
-      register: RUBY_INSTALLED
+      register: ruby_installed
       changed_when: false
 
     - name: Make sure Ruby is installed
       ansible.builtin.debug:
-        var: RUBY_INSTALLED
+        var: ruby_installed
 
     - name: Check OS version
       ansible.builtin.command: cat /etc/redhat-release
-      register: OS_VERSION
+      register: os_version
       changed_when: false
 
     - name: Show OS version
       ansible.builtin.debug:
-        var: OS_VERSION
+        var: os_version
