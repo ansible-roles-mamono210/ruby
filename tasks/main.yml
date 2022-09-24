@@ -64,7 +64,7 @@
   when: ruby_installed is failed
 
 - name: Add ruby symlinks.
-  ansible.builtin.file:  # noqa 208
+  ansible.builtin.file:
     src: "/usr/local/bin/{{ item }}"
     dest: "/usr/bin/{{ item }}"
     state: link
