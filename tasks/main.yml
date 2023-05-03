@@ -44,6 +44,8 @@
 
 - name: Create Makefile.
   ansible.builtin.command: ./configure --enable-shared
+  register: makefile_created
+  changed_when: makefile_created.rc == 0
   args:
     chdir: "{{ workspace }}/ruby-{{ ruby_version }}"
   when: ruby_installed is failed
