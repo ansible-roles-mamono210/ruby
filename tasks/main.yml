@@ -7,6 +7,26 @@
   environment:
     PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
 
+- name: Install Core DNF Plugins
+  ansible.builtin.dnf:
+    name: dnf-plugins-core
+
+- name: Check if CodeReady Builder repository is enabled (CentOS Stream 9)
+  ansible.builtin.shell:
+    cmd: dnf repolist enabled | grep -qw crb
+  register: crb_check
+  changed_when: false
+  ignore_errors: true
+
+- name: Enable CodeReady Builder repository (CentOS Stream 9)
+  ansible.builtin.command:
+    cmd: dnf config-manager --set-enabled crb
+  changed_when: crb_check.rc != 0
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == "9"
+    - crb_check.rc != 0
+
 - name: Install packages required to build ruby.
   ansible.builtin.package:
     name: "{{ item }}"
