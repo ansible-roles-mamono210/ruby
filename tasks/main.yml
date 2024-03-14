@@ -42,6 +42,7 @@
     - openssl-devel
     - readline-devel
     - wget
+    - libyaml-devel
     - zlib-devel
   when: ruby_installed is failed
 
