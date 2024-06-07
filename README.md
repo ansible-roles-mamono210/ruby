@@ -3,7 +3,7 @@
 Role Description
 =========
 
-Installs [Ruby](https://www.ruby-lang.org) from source for CentOS7/Stream8.
+Installs [Ruby](https://www.ruby-lang.org) from source for CentOS Stream 9.
 
 Requirements
 ------------
