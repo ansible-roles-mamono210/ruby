@@ -11,6 +11,7 @@ provisioner:
   config_options:
     defaults:
       callbacks_enabled: ansible.posix.profile_tasks
+      roles_path: "$HOME/.ansible/roles/:/tmp"
 verifier:
   name: ansible
 scenario:
