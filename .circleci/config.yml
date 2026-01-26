@@ -85,7 +85,7 @@ workflows:
           matrix:
             parameters:
               checkout-path:
-                - 'ruby'
+                - 'ruby_install'
               molecule-executor-image:
                 - 'ghcr.io/docker-images-mamono210/circleci-executors/molecule-docker:latest'
               molecule-test-image:
